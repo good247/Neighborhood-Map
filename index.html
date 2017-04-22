@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
+		<title>我的故乡</title>
+		<link rel="stylesheet" href="css/map.css" />
+	</head>
+	<body>
+		<!-- 大容器  -->
+		<div class="container">
+			<i id="menu" class="menu" onclick="hide()" title="菜单"></i>
+			<!-- 左侧盒子 -->
+			<div class="box" id="box">
+				<!-- 搜索  -->
+				<div class="search">
+					<div class="searchLike" id="searchLike">
+						<input type="text" placeholder="请输入地点名称" class="searchInput" data-bind="value:entryContent,event:{keyup:titleSearch,blur:titleSearch}">
+	                	<i id="go-places" class="searcBtn" data-bind="click:titleSearch"></i>
+				    </div>
+				</div>
+				<!-- 下方分类搜索 -->
+				<div class="sortSearch">
+					<h3>分类查询</h3>
+					<span>类型： </span>
+					<input id="all" type="button" class="type" value="全部" data-bind = "click: sortSearch.bind($data, 'all')" />
+					<input id="park" type="button" class="type" value="公园" data-bind = "click: sortSearch.bind($data, 'park')" />
+					<input id="hotel" type="button" class="type" value="酒店" data-bind = "click: sortSearch.bind($data, 'hotel')"/>
+					<input id="shopping" type="button" class="type" value="购物" data-bind = "click: sortSearch.bind($data, 'shopping')"/>
+					<input id="paint" type="button" class="type" value="少年宫" data-bind = "click: sortSearch.bind($data, 'pain')"/>
+					<input id="hospital" type="button" class="type" value="医院" data-bind = "click: sortSearch.bind($data, 'hospital')"/>
+					<ul data-bind = "foreach:locationList">
+						<li data-bind = "text:title,click:$parent.showMarker,visible: shouldShow"></li>
+					</ul>
+			    </div>
+			</div>
+		<!-- 切换样式-->
+			<div class="changStyle">
+				<div class="showHide">
+					<p><span>显示隐藏标记</span></p>
+					<input id="show-markers" type="button" value="Show" class="show">
+		      	    <input id="hide-markers" type="button" value="Hide" class="hide">
+				</div>
+				<p><span>切换地图样式</span></p>
+				<div class="styelChange"  id="styleChange">
+					<input  type="button"  class="styleBtn" value="普通"  name="ordinary" onclick="changeStyle(this.name)">
+					<input  type="button"  class="styleBtn" value="清新" name="fresh" onclick="changeStyle(this.name)">
+					<input  type="button"  class="styleBtn" value="夜间" name="night" onclick="changeStyle(this.name)">
+				</div>
+			</div>
+		<!-- end切换样式 -->
+		<!-- 地图 -->
+			<div id="map">
+			</div>
+		</div>
+		
+		<script src="js/jquery.min.js"></script>
+		<script src="js/knockout-3.4.2.js"></script>
+		<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRVxrdbj_XoLSVLKubwBxENPq26RhGZs&libraries=places,geometry&v=3">
+        </script>
+        <script   defer src="js/map.js"></script>
+		<script>
+			// 快捷键
+			$("body").keyup(function(e) {
+				event = e || event;
+			   if (event.keyCode == "13") {//keyCode=13是回车键
+			       locationViewModel.titleSearch();
+			   }
+			});
+			// 隐藏左侧
+			function hide(){
+				$("#box").toggle();
+			}
+		</script>
+    </body>
+</html>
