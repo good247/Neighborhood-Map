@@ -95,7 +95,6 @@ var viewModel = {
 /*  ======= 视图  ======= */
 var mapView = {
 	self : this,
-	
 	init : function() {
 		// 中心
 		var center = viewModel.getCenter();
@@ -190,6 +189,8 @@ var mapView = {
 };
 
 viewModel.initMap();
+
+
 // 给信息框填充内容
 function populateInfoWindow(marker,infoWindow) {
 	$(".searchDetail").html('');
@@ -410,7 +411,8 @@ var locationViewModel = function() {
 		self.locationList.push(new locatOne(locItem));
 	});
 	this.currentLoc = ko.observable( this.locationList()[0]);
-	
+	// 把信息窗提出来，作为一个全局变量解决点击切换地点时，上一个信息窗没有关闭的问题
+	var infoWindow = new google.maps.InfoWindow();
 	// 点击列表名称 对应标记动画
 	this.showMarker = function(newLocation) { 
 //		var placeId = newLocation.placeId;
@@ -440,14 +442,41 @@ var locationViewModel = function() {
 	     markers[i].setAnimation(null);
 	     
 	    }
-		
 		toggleBounce(newLocation.marker);
-	    var infoWindow = new google.maps.InfoWindow();
-		  // 标记动画
+		// 标记动画
 	    populateInfoWindow(newLocation.marker, infoWindow);
 		// 先让之前的标记停止动画
 	};
 	
+	// 搜索框及时搜索显示
+	this.searchPosition = ko.computed(function(){
+		
+		var LocationS = self.locationList();
+		var content = self.entryContent();
+		// 搜索内容为无
+		if(!content || content == '全部' || content == '全'){
+			return ko.utils.arrayFilter(LocationS,  function(position, index) {
+				position.marker.setMap(map);
+				return LocationS;
+			});
+			
+		}else{
+			// 有特定搜索内容，返回符合的地点数组
+			return ko.utils.arrayFilter(LocationS,  function(position, index) {
+			// 标记先都隐藏
+			position.marker.setMap(null);
+            var nameStr = position.name.indexOf(self.entryContent()) !== -1;
+            // 类型英文都转换成小写
+            var typeStr = position.type.toLowerCase().indexOf(self.entryContent().toLowerCase()) !== -1;
+            // 符合条件的标记显示
+            if(nameStr || typeStr){
+            	position.marker.setMap(map);
+            }
+            // 返回符合条件的地点标记
+            return nameStr || typeStr;
+          });
+		}
+	});
 	// 按类型查找
 	this.sortSearch = function(sortType) {
 		var LocationS = this.locationList();
@@ -467,9 +496,9 @@ var locationViewModel = function() {
 
 	};
 	
-    // 按名称查找
+    // 按名称查找还是保留
 	this.titleSearch = function() {
-		var title = this.entryContent().replace(/(^\s*)|(\s*$)/g, "");;
+		var title = this.entryContent().replace(/(^\s*)|(\s*$)/g, "");
 		var LocationS = this.locationList();
 		// 循环列表项
 		for(var i = 0; i < LocationS.length; i++){
@@ -479,7 +508,8 @@ var locationViewModel = function() {
 			 LocationS[i].marker.setMap(null);
 			 var locTitle = LocationS[i].name;
 			// 再判断是否应该显示 不是自己的类型并且不是all 就不显示
-			if(locTitle.indexOf(title) > 0){
+			// 修改判断不严谨    当用户输入空字符串或所输入的内容为地点第一个字打头儿的时候，indexOf返回的并不是大于0，而是等于0：
+			if(locTitle.indexOf(title) >= 0){
 				 LocationS[i].shouldShow(true) ;
 				 LocationS[i].marker.setMap(map);
 			}
@@ -490,4 +520,5 @@ var locationViewModel = function() {
 }
 // 启动绑定
 ko.applyBindings(new locationViewModel());
+
 

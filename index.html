@@ -15,7 +15,7 @@
 				<!-- 搜索  -->
 				<div class="search">
 					<div class="searchLike" id="searchLike">
-						<input type="text" placeholder="请输入地点名称" class="searchInput" data-bind="value:entryContent,event:{keyup:titleSearch,blur:titleSearch}">
+						<input type="text" placeholder="请输入地点名称" class="searchInput" data-bind="textInput: entryContent" autofocus>
 	                	<i id="go-places" class="searcBtn" data-bind="click:titleSearch"></i>
 				    </div>
 				</div>
@@ -24,13 +24,13 @@
 					<h3>分类查询</h3>
 					<span>类型： </span>
 					<input id="all" type="button" class="type" value="全部" data-bind = "click: sortSearch.bind($data, 'all')" />
-					<input id="park" type="button" class="type" value="公园" data-bind = "click: sortSearch.bind($data, 'park')" />
-					<input id="hotel" type="button" class="type" value="酒店" data-bind = "click: sortSearch.bind($data, 'hotel')"/>
-					<input id="shopping" type="button" class="type" value="购物" data-bind = "click: sortSearch.bind($data, 'shopping')"/>
-					<input id="paint" type="button" class="type" value="少年宫" data-bind = "click: sortSearch.bind($data, 'pain')"/>
-					<input id="hospital" type="button" class="type" value="医院" data-bind = "click: sortSearch.bind($data, 'hospital')"/>
-					<ul data-bind = "foreach:locationList">
-						<li data-bind = "text:title,click:$parent.showMarker,visible: shouldShow"></li>
+					<input id="park" type="button" class="type" value="park" data-bind = "click: sortSearch.bind($data, 'park')" />
+					<input id="hotel" type="button" class="type" value="hotel" data-bind = "click: sortSearch.bind($data, 'hotel')"/>
+					<input id="shopping" type="button" class="type" value="shopping" data-bind = "click: sortSearch.bind($data, 'shopping')"/>
+					<input id="paint" type="button" class="type" value="pain" data-bind = "click: sortSearch.bind($data, 'pain')"/>
+					<input id="hospital" type="button" class="type" value="hospital" data-bind = "click: sortSearch.bind($data, 'hospital')"/>
+					<ul data-bind = "foreach:searchPosition">
+						<li data-bind = "text:$data.name,click:$parent.showMarker,visible: shouldShow"></li>
 					</ul>
 			    </div>
 			</div>
@@ -56,21 +56,19 @@
 		
 		<script src="js/jquery.min.js"></script>
 		<script src="js/knockout-3.4.2.js"></script>
-		<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRVxrdbj_XoLSVLKubwBxENPq26RhGZs&libraries=places,geometry&v=3">
-        </script>
-        <script   defer src="js/map.js"></script>
 		<script>
-			// 快捷键
-			$("body").keyup(function(e) {
-				event = e || event;
-			   if (event.keyCode == "13") {//keyCode=13是回车键
-			       locationViewModel.titleSearch();
-			   }
-			});
+			function googleError(){
+				alert("您的网络不好，加载不了地图，请稍候再试！")
+				return false;
+			}
 			// 隐藏左侧
 			function hide(){
 				$("#box").toggle();
 			}
+
 		</script>
+		<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoRVxrdbj_XoLSVLKubwBxENPq26RhGZs&libraries=places,geometry&v=3"  onerror="googleError()">
+        </script>
+        <script src="js/map.js"></script>
     </body>
 </html>
