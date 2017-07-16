@@ -3,6 +3,8 @@ var map;
 var markers = [];
 // 全局的地点标记数组
 var placeMarkers = [];
+// 信息窗口
+var infoWindow = new google.maps.InfoWindow();
 /*  ======= 地图模型（放置数据） ======= */
 var mapModel = {
 	center: {lat:36.6612471,lng:117.0209026},
@@ -117,8 +119,6 @@ var mapView = {
         map.setMapTypeId('styled_map');
 		// 获得地点集合
 		var locations = viewModel.getLocations();
-		// 信息窗口
-		var infoWindow = new google.maps.InfoWindow();
 		
 		// 遍历地点集合
 		for(var i = 0; i < locations.length; i++){
@@ -411,8 +411,7 @@ var locationViewModel = function() {
 		self.locationList.push(new locatOne(locItem));
 	});
 	this.currentLoc = ko.observable( this.locationList()[0]);
-	// 把信息窗提出来，作为一个全局变量解决点击切换地点时，上一个信息窗没有关闭的问题
-	var infoWindow = new google.maps.InfoWindow();
+	
 	// 点击列表名称 对应标记动画
 	this.showMarker = function(newLocation) { 
 //		var placeId = newLocation.placeId;
